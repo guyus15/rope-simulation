@@ -9,36 +9,36 @@
 #define SCREEN_HEIGHT 720
 #define FPS 60
 
-const int stabilityLoops = 5;
-const float bounce = 0.999;
-const float gravity = 0.5;
-const float friction = 0.999;
+const uint32_t stabilityLoops = 5;
+const float_t bounce = 0.999;
+const float_t gravity = 0.5;
+const float_t friction = 0.999;
 
 struct Point {
-	float x;
-	float y;
-	float oldX;
-	float oldY;
+	float_t x;
+	float_t y;
+	float_t oldX;
+	float_t oldY;
 	bool shouldMove;
 };
 
 struct Stick {
 	Point& point1;
 	Point& point2;
-	float length;
+	float_t length;
 	bool shouldRender;
 	SDL_Color colour;
 };
 
-void updatePoints(Point points[], const int size) {
-	for (int i = 0; i < size; i++) {
+void updatePoints(Point points[], const int32_t size) {
+	for (uint32_t i = 0; i < size; i++) {
 
 		if (!points[i].shouldMove) {
 			continue;
 		}
 
-		float deltaX = (points[i].x - points[i].oldX) * friction;
-		float deltaY = (points[i].y - points[i].oldY) * friction;
+		float_t deltaX = (points[i].x - points[i].oldX) * friction;
+		float_t deltaY = (points[i].y - points[i].oldY) * friction;
 
 		points[i].oldX = points[i].x;
 		points[i].oldY = points[i].y;
@@ -49,16 +49,16 @@ void updatePoints(Point points[], const int size) {
 	}
 }
 
-void updateSticks(Stick sticks[], const int size) {
-	for (int i = 0; i < size; i++) {
-		float deltaX = sticks[i].point2.x - sticks[i].point1.x;
-		float deltaY = sticks[i].point2.y - sticks[i].point1.y;
-		float distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
-		float difference = sticks[i].length - distance;
-		float percent = difference / distance / 2;
+void updateSticks(Stick sticks[], const int32_t size) {
+	for (int32_t i = 0; i < size; i++) {
+		float_t deltaX = sticks[i].point2.x - sticks[i].point1.x;
+		float_t deltaY = sticks[i].point2.y - sticks[i].point1.y;
+		float_t distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
+		float_t difference = sticks[i].length - distance;
+		float_t percent = difference / distance / 2;
 
-		float offsetX = deltaX * percent;
-		float offsetY = deltaY * percent;
+		float_t offsetX = deltaX * percent;
+		float_t offsetY = deltaY * percent;
 
 		if (sticks[i].point1.shouldMove) {
 			sticks[i].point1.x -= offsetX;
@@ -72,15 +72,15 @@ void updateSticks(Stick sticks[], const int size) {
 	}
 }
 
-void constrainPoints(Point points[], const int size) {
-	for (int i = 0; i < size; i++) {
+void constrainPoints(Point points[], const int32_t size) {
+	for (int32_t i = 0; i < size; i++) {
 
 		if (!points[i].shouldMove) {
 			continue;
 		}
 
-		float deltaX = (points[i].x - points[i].oldX) * friction;
-		float deltaY = (points[i].y - points[i].oldY) * friction;
+		float_t deltaX = (points[i].x - points[i].oldX) * friction;
+		float_t deltaY = (points[i].y - points[i].oldY) * friction;
 
 		if (points[i].x > SCREEN_WIDTH) {
 			points[i].x = SCREEN_WIDTH;
@@ -101,10 +101,10 @@ void constrainPoints(Point points[], const int size) {
 	}
 }
 
-void renderPoints(SDL_Renderer* renderer, const Point points[], const int size) {
+void renderPoints(SDL_Renderer* renderer, const Point points[], const int32_t size) {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
-	for (int i = 0; i < size; i++) {
+	for (int32_t i = 0; i < size; i++) {
 		SDL_RenderDrawPointF(
 			renderer,
 			points[i].x,
@@ -113,8 +113,8 @@ void renderPoints(SDL_Renderer* renderer, const Point points[], const int size) 
 	}
 }
 
-void renderSticks(SDL_Renderer* renderer, const Stick sticks[], const int size) {
-	for (int i = 0; i < size; i++) {
+void renderSticks(SDL_Renderer* renderer, const Stick sticks[], const int32_t size) {
+	for (int32_t i = 0; i < size; i++) {
 
 		SDL_Color c = sticks[i].colour;
 
@@ -139,14 +139,14 @@ void renderSticks(SDL_Renderer* renderer, const Stick sticks[], const int size) 
 	}
 }
 
-float distanceBetweenPoints(const Point& point1, const Point& point2) {
-	float deltaX = point1.x - point2.x;
-	float deltaY = point1.y - point2.y;
+float_t distanceBetweenPoints(const Point& point1, const Point& point2) {
+	float_t deltaX = point1.x - point2.x;
+	float_t deltaY = point1.y - point2.y;
 
 	return sqrt(pow(deltaX, 2) + pow(deltaY, 2));
 }
 
-int main(int argc, char* argv[]) {
+int main(int32_t argc, char* argv[]) {
 
 	// Random seeding from time
 	srand(time(NULL));
@@ -190,7 +190,7 @@ int main(int argc, char* argv[]) {
 		{450, 275, 450, 275, true},
 		{350, 275, 300, 240, true}
 	};
-	int pointSize = 8;
+	int32_t pointSize = 8;
 
 	// Define a set of sticks
 	Stick sticks[] = {
@@ -204,7 +204,7 @@ int main(int argc, char* argv[]) {
 		{points[7], points[4], distanceBetweenPoints(points[7], points[4]), true},
 		{points[7], points[5], distanceBetweenPoints(points[7], points[5]), true},
 	};
-	int stickSize = 9;
+	int32_t stickSize = 9;
 
 	bool running = true;
 	while (running) {
@@ -224,7 +224,7 @@ int main(int argc, char* argv[]) {
 		updatePoints(points, pointSize);
 
 		// Loop through for stick stablility
-		for (int i = 0; i < stabilityLoops; i++) {
+		for (int32_t i = 0; i < stabilityLoops; i++) {
 			updateSticks(sticks, stickSize);
 			constrainPoints(points, pointSize);
 		}
@@ -233,7 +233,7 @@ int main(int argc, char* argv[]) {
 
 		SDL_RenderPresent(renderer);
 
-		SDL_Delay((int)1000 / FPS);
+		SDL_Delay((int32_t)1000 / FPS);
 	}
 
 	if (renderer) {
